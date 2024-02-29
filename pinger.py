@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import time
+import traceback
 from datetime import datetime
 
 import aiohttp
@@ -83,13 +84,13 @@ class SitePinger:
                 self.sites[name]["isUp"] = False
             self.sites[name]["responseTime"] = response_time
             logger.info(str(status) + " " + str(response_time) + " " + self.sites[name]["url"])
-        except Exception as e:
+        except Exception:
             if self.sites[name]["isUp"]:
                 message = "🛑 " + self.sites[name]["url"] + " is down"
                 await self._send_message_to_chats(message)
             self.sites[name]["isUp"] = False
             self.sites[name]["responseTime"] = 0
-            logger.error(str(e) + " " + self.sites[name]["url"])
+            logger.error(traceback.format_exc() + " " + self.sites[name]["url"])
 
     async def _send_message_to_chat(self, chat_id, message):
         await self.application.bot.send_message(chat_id, message,
