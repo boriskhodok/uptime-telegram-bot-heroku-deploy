@@ -5,6 +5,7 @@ from datetime import datetime
 
 import aiohttp
 import yaml
+from aiohttp import ClientTimeout
 from telegram.ext import Application
 from yaml import Loader
 
@@ -43,6 +44,7 @@ class SitePinger:
 
         self.sites = _process_sites(yaml.load(open("sites.yml"), Loader=Loader)["sites"])
         self.application = application
+        self.timeout = 20
 
     async def check_sites_and_send_message(self):
         for name in self.sites.keys():
@@ -65,7 +67,7 @@ class SitePinger:
     async def _ping_site(self, name, session):
         try:
             start = time.monotonic()
-            r = await session.get(self.sites[name]["url"])
+            r = await session.get(self.sites[name]["url"], timeout=ClientTimeout(total=self.timeout))
             status = r.status
             response_time = int(round(time.monotonic() - start, 3) * 1000)
             self.sites[name]["responseStatus"] = status

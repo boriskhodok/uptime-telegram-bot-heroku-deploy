@@ -2,10 +2,9 @@ import asyncio
 import logging
 import os
 
-from telegram import Bot, Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, ContextTypes, ApplicationBuilder
+from telegram import Update
+from telegram.ext import CommandHandler, ContextTypes, ApplicationBuilder
 
-from github_poller import GitHubIssuePoller
 from pinger import SitePinger
 
 # Enable logging
@@ -19,7 +18,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
     await context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
     logger.info("Adding chat to the list: " + str(chat_id))
-    GitHubIssuePoller.add_chat(chat_id)
+    SitePinger.add_chat(chat_id)
 
 
 def error(update, context):
